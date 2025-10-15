@@ -1,0 +1,23 @@
+version: 0.2
+
+env:
+  parameter-store:
+      DOCKER_registry_username: /simplePythonAPP/docker/username
+      DOCKER_registry_pwd: /simplePythonAPP/docker/pwd
+phases:
+ install:
+   runtime-versions:
+     python : 3.11
+ pre_build:
+   commands:
+     - echo "Installing flask"
+     - pip install -r requirements.txt
+ build:
+    commands:
+       - echo "Building docker image"
+       - echo $DOCKER_registry_pwd | docker login --username $DOCKER_registry_username --password-stdin docker.io
+       - docker build -t "docker.io/madhudev66/pythonapp:latest" .
+       - docker push "docker.io/madhudev66/pythonapp:latest"
+ post_build:
+   commands:
+     - echo "Build is successful"
